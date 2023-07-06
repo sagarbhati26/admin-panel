@@ -1,22 +1,23 @@
-import { useState, useEffect } from "react";
-import { FaBars } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
+import { Layout, Menu, Button } from 'antd';
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  UploadOutlined,
+  UserOutlined,
+  VideoCameraOutlined,
+} from '@ant-design/icons';
+
+const { Header, Sider, Content } = Layout;
 
 const Sidebar = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
-  const toggle = () => setIsOpen(!isOpen);
-
-  const handleClick = (index) => {
-    const updatedMenuItems = menuItem.map((item, i) => {
-      if (i === index) {
-        return { ...item, isActive: true };
-      } else {
-        return { ...item, isActive: false };
-      }
-    });
-
-    setMenuItem(updatedMenuItems);
+  const toggle = () => {
+    setCollapsed(!collapsed);
+    setIsOpen(!isOpen);
   };
 
   useEffect(() => {
@@ -34,65 +35,73 @@ const Sidebar = ({ children }) => {
 
   const menuItem = [
     {
-      path: "/",
-      name: "profile",
-      icon: <i className="bi bi-file-person" />,
+      path: '/',
+      name: 'Profile',
+      icon: <UserOutlined />,
       isActive: false,
     },
     {
-      path: "/report",
-      name: "Report",
-      icon: <i className="bi bi-graph-up-arrow" />,
+      path: '/report',
+      name: 'Report',
+      icon: <VideoCameraOutlined />,
       isActive: false,
     },
     {
-      path: "/content",
-      name: "Content",
-      icon: <i className="bi bi-files" />,
+      path: '/content',
+      name: 'Content',
+      icon: <UploadOutlined />,
       isActive: false,
     },
   ];
 
   return (
-    <div className="container-fluid d-flex">
-      <div className="row">
-        <div
-          style={{ width: isOpen ? "200px" : "50px" }}
-          className="col-12 col-sm-2 sidebar bg-light vh-100"
-        >
-          <div className="top_section">
-            <div
-              style={{ marginLeft: isOpen ? "5px" : "0px" }}
-              className="bars mb-4 d-flex"
-            >
-              <FaBars onClick={toggle} />
-            </div>
-          </div>
+    <Layout style={{ minHeight: '100vh' }}>
+      <Sider 
+      theme='light'
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
+        breakpoint="md"
+        onBreakpoint={broken => setIsOpen(!broken)}
+        width={200}
+        collapsedWidth={64}
+      >
+        <div className="demo-logo-vertical" />
+        <Menu theme="light" mode={isOpen ? 'inline' : 'vertical'} defaultSelectedKeys={['1']}>
           {menuItem.map((item, index) => (
-        <NavLink
-        to={item.path}
-        key={index}
-        className={`nav-link link d-flex mb-4 text-dark`}
-        activeClassName="active"
-        >
-        <div className="icon">{item.icon}</div>
-        <div style={{ display: isOpen ? "block" : "none" }} className="link_text">
-          {item.name}
-        </div>
-      </NavLink>
-      
-      
-       
-        
-        
-        
-         
-          
+            <Menu.Item key={index} icon={item.icon}>
+              <NavLink to={item.path}>{item.name}</NavLink>
+            </Menu.Item>
           ))}
-        </div>
-        <main className="col-12 col-sm-10">{children}</main>
-      </div>
-    </div>
+        </Menu>
+      </Sider>
+      <Layout>
+        <Header className="bg-light"
+        style={{ padding: 0 }}>
+          <Button
+            type="text"
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={toggle}
+            style={{
+              fontSize: '16px',
+              width: 64,
+              height: 64,
+            }}
+          />
+        </Header>
+        <Content
+          style={{
+            margin: '24px 16px',
+            padding: 24,
+            minHeight: 280,
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          {children}
+        </Content>
+      </Layout>
+    </Layout>
   );
 };
 
